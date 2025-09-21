@@ -13,8 +13,6 @@ public class Shooter {
     private CRServo servo1;
     private Boolean IsServoFlashRunning = false;
 
-
-
     public Shooter(HardwareMap hardwareMapInit) {
         shooterMotor0 = hardwareMapInit.get(DcMotor .class, "motor0");
         shooterMotor1 = hardwareMapInit.get(DcMotor.class, "motor1");
@@ -24,14 +22,17 @@ public class Shooter {
         servo1 = hardwareMapInit.get(CRServo.class, "servo1");
         servo1.setDirection(CRServo.Direction.REVERSE);
     }
+
     public void servoOn (){
         servo0.setPower(1);
         servo1.setPower(1);
     }
+
     public void servoOff (){
         servo0.setPower(0);
         servo1.setPower(0);
     }
+
     public void servoFlash (){
         if (IsServoFlashRunning){
             return;
