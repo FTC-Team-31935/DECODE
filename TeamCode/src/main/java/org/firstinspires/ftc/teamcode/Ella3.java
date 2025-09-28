@@ -49,7 +49,7 @@ public class Ella3 extends LinearOpMode {
         //led0 = hardwareMap.get(LED.class, "led0");
         //led1 = hardwareMap.get(LED.class, "led1");
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, telemetry);
 
 
 
@@ -62,7 +62,7 @@ public class Ella3 extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetry.addData("Status", "Running");
-            telemetry.update();
+
 
             if (gamepad1.a) {
                 shooter.shootSlow();
@@ -72,11 +72,13 @@ public class Ella3 extends LinearOpMode {
             } else if (gamepad1.x) {
                 shooter.shootFast();
             } else if (gamepad1.y){
-                shooter.servoFlash();
-            } else {
+                shooter.servoOn();
+            } else if (gamepad1.right_bumper){
                 shooter.shootStop();
 
             }
+            shooter.loadTest();
+            telemetry.update();
 
         }
     }

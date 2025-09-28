@@ -50,7 +50,7 @@ public class Ella2 extends LinearOpMode {
         //led0 = hardwareMap.get(LED.class, "led0");
         //led1 = hardwareMap.get(LED.class, "led1");
 
-        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap, telemetry);
 
 
         telemetry.addData("Status", "Initialized");
