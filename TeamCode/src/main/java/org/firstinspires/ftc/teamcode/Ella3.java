@@ -62,12 +62,12 @@ public class Ella3 extends LinearOpMode {
             telemetry.addData("Status", "Running");
 
             if (gamepad1.a) {
-                shooter.shootSlow();
-                telemetry.addData("Who", "motors are running");
-            } else if (gamepad1.b) {
                 shooter.shootMedium();
+                telemetry.addData("Who", "motors are running");
             } else if (gamepad1.x) {
-                shooter.shootFast();
+                shooter.increaseVelocity(-20);
+            } else if (gamepad1.b) {
+                shooter.increaseVelocity(20);
             } else if (gamepad1.y){
                 shooter.servoOn();
             } else if (gamepad1.right_bumper){
@@ -77,6 +77,7 @@ public class Ella3 extends LinearOpMode {
             }
 
             shooter.loadTest();
+            shooter.GetShootSpeed();
             telemetry.update();
 
         }
