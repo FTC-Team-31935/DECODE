@@ -51,8 +51,6 @@ public class Ella3 extends LinearOpMode {
 
         shooter = new Shooter(hardwareMap, telemetry);
 
-
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
@@ -62,7 +60,6 @@ public class Ella3 extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetry.addData("Status", "Running");
-
 
             if (gamepad1.a) {
                 shooter.shootSlow();
@@ -75,8 +72,10 @@ public class Ella3 extends LinearOpMode {
                 shooter.servoOn();
             } else if (gamepad1.right_bumper){
                 shooter.shootStop();
-
+            } else if (gamepad1.left_bumper){
+                shooter.servoOff();
             }
+
             shooter.loadTest();
             telemetry.update();
 
