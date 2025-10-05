@@ -107,10 +107,10 @@ public class Shooter {
     }
     public void setVelocity(double velocity){
         shooterMotor0.setVelocity(-velocity);
-        shooterMotor1.setVelocity(velocity);
+        shooterMotor1.setVelocity(velocity+50);
     }
     public void increaseVelocity (double increase){
-        double startVel=shooterMotor0.getVelocity();
+        double startVel=shooterMotor1.getVelocity();
         setVelocity(startVel+increase);
     }
 }
