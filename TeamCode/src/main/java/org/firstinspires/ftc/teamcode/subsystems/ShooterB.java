@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static java.lang.Thread.sleep;
-
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class Shooter {
+public class ShooterB {
     private DcMotorEx shooterMotor0   = null;
     private DcMotorEx shooterMotor1   = null;
     private CRServo servo0;
@@ -20,13 +19,14 @@ public class Shooter {
     private NormalizedColorSensor load_stopper;
     private Telemetry telemetry;
 
-    public Shooter(HardwareMap hardwareMapInit, Telemetry  telemetry) {
+    public ShooterB(HardwareMap hardwareMapInit, Telemetry  telemetry) {
         this.telemetry = telemetry;
 
         shooterMotor0 = hardwareMapInit.get(DcMotorEx .class, "motor0");
         shooterMotor1 = hardwareMapInit.get(DcMotorEx.class, "motor1");
 
         //shooterMotor1.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterMotor0.setDirection(DcMotorEx.Direction.REVERSE);
 
         shooterMotor0.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -86,17 +86,17 @@ public class Shooter {
     }
 
     public void shootSlow(){
-        shooterMotor0.setVelocity(-1200);
+        shooterMotor0.setVelocity(1200);
         shooterMotor1.setVelocity(1200);
     }
 
     public void shootMedium(){
-        shooterMotor0.setVelocity(-1800);
+        shooterMotor0.setVelocity(1800);
         shooterMotor1.setVelocity(1800);
     }
 
     public void shootFast(){
-        shooterMotor0.setVelocity(-2400);
+        shooterMotor0.setVelocity(2400);
         shooterMotor1.setVelocity(2400);
     }
 
@@ -109,8 +109,8 @@ public class Shooter {
      telemetry.addData("Velocity1 (rps)", "%.3f", shooterMotor1.getVelocity());
     }
     public void setVelocity(double velocity){
-        shooterMotor0.setVelocity(-velocity);
-        shooterMotor1.setVelocity(velocity+50);
+        shooterMotor0.setVelocity(velocity);
+        shooterMotor1.setVelocity(velocity);
     }
     public void increaseVelocity (double increase){
         double startVel=shooterMotor1.getVelocity();
