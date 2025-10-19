@@ -14,7 +14,7 @@ public class ShooterB {
     private DcMotorEx shooterMotor0   = null;
     private DcMotorEx shooterMotor1   = null;
     private CRServo servo0;
-    private CRServo servo1;
+   // private CRServo servo1;
     private Boolean IsServoFlashRunning = false;
     private NormalizedColorSensor load_stopper;
     private Telemetry telemetry;
@@ -22,18 +22,18 @@ public class ShooterB {
     public ShooterB(HardwareMap hardwareMapInit, Telemetry  telemetry) {
         this.telemetry = telemetry;
 
-        shooterMotor0 = hardwareMapInit.get(DcMotorEx .class, "motor0");
-        shooterMotor1 = hardwareMapInit.get(DcMotorEx.class, "motor1");
+        shooterMotor0 = hardwareMapInit.get(DcMotorEx .class, "Shooter Right");
+        shooterMotor1 = hardwareMapInit.get(DcMotorEx.class, "Shooter Left");
 
-        //shooterMotor1.setDirection(DcMotorEx.Direction.REVERSE);
-        shooterMotor0.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterMotor1.setDirection(DcMotorEx.Direction.REVERSE);
+        //shooterMotor0.setDirection(DcMotorEx.Direction.REVERSE);
 
         shooterMotor0.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        servo0 = hardwareMapInit.get(CRServo.class, "servo0");
-        servo1 = hardwareMapInit.get(CRServo.class, "servo1");
-        servo1.setDirection(CRServo.Direction.REVERSE);
+        servo0 = hardwareMapInit.get(CRServo.class, "Shooter Loader");
+       // servo1 = hardwareMapInit.get(CRServo.class, "servo1");
+       // servo1.setDirection(CRServo.Direction.REVERSE);
 
         load_stopper = hardwareMapInit.get(NormalizedColorSensor.class, "load_stopper");
         if (load_stopper instanceof SwitchableLight) {
@@ -54,12 +54,12 @@ public class ShooterB {
 
     public void servoOn (){
         servo0.setPower(1);
-        servo1.setPower(1);
+        //servo1.setPower(1);
     }
 
     public void servoOff (){
         servo0.setPower(0);
-        servo1.setPower(0);
+       // servo1.setPower(0);
     }
 
     public void servoFlash (){
@@ -91,8 +91,8 @@ public class ShooterB {
     }
 
     public void shootMedium(){
-        shooterMotor0.setVelocity(1800);
-        shooterMotor1.setVelocity(1800);
+        shooterMotor0.setVelocity(1000);
+        shooterMotor1.setVelocity(1000);
     }
 
     public void shootFast(){
