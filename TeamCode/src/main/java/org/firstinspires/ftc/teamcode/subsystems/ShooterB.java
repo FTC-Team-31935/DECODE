@@ -96,8 +96,8 @@ public class ShooterB {
     }
 
     public void shootFast(){
-        shooterMotor0.setVelocity(2400);
-        shooterMotor1.setVelocity(2400);
+        shooterMotor0.setVelocity(980);
+        shooterMotor1.setVelocity(980);
     }
 
     public void shootStop(){

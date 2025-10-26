@@ -86,7 +86,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TeleOp(name="UpdatedController", group = "Concept")
+@TeleOp(name="UpdatedController")
 //@Disabled
 public class UpdatedController extends LinearOpMode
 {
@@ -109,7 +109,6 @@ public class UpdatedController extends LinearOpMode
     private DcMotor backLeftDrive = null;  //  Used to control the left back drive wheel
     private DcMotor backRightDrive = null;  //  Used to control the right back drive wheel
 
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
@@ -125,9 +124,6 @@ public class UpdatedController extends LinearOpMode
     @Override public void runOpMode()
     {
         shooter = new ShooterB(hardwareMap, telemetry);
-
-
-
 
         // Initialize the Apriltag Detection process
         initAprilTag();
@@ -148,8 +144,7 @@ public class UpdatedController extends LinearOpMode
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        if (USE_WEBCAM)
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+        setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
@@ -168,7 +163,6 @@ public class UpdatedController extends LinearOpMode
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
             if (gamepad1.left_bumper && targetFound) {
-
                 AutomaticMovement();
             } else {
                 ManualMovement();
@@ -179,7 +173,7 @@ public class UpdatedController extends LinearOpMode
             telemetry.addData("Status", "Running");
 
             if (gamepad1.aWasPressed()) {
-                DESIRED_DISTANCE = 60.0;
+                DESIRED_DISTANCE = 68.0;
                 shooter.shootFast();
             } else if (gamepad1.xWasPressed()) {
                 shooter.servoOff();
@@ -193,10 +187,16 @@ public class UpdatedController extends LinearOpMode
                 shooter.servoOn();
             } else if (gamepad1.dpad_left){
                 shooter.shootStop();
-            } else if (gamepad1.dpad_down){
+            } else if (gamepad1.options){
                 DESIRED_TAG_ID = 20; //blue
-            } else if (gamepad1.dpad_up) {
+                gamepad1.setLedColor(0,0,255,-1);
+            } else if (gamepad1.share) {
                 DESIRED_TAG_ID = 24; //red
+                gamepad1.setLedColor(255,0,0,-1);
+            } else if (gamepad1.dpad_up){
+                shooter.increaseVelocity(50);
+            } else if (gamepad1.dpad_down) {
+                shooter.increaseVelocity(-50);
             }
 
             /*  test individual motors
@@ -272,6 +272,7 @@ public class UpdatedController extends LinearOpMode
         } else {
             telemetry.addData("\n>","Drive using joysticks to find valid target\n");
         }
+        telemetry.addData("Desired distance:",DESIRED_DISTANCE);
     }
 
     public void TestForAprilTags(){
@@ -349,17 +350,11 @@ public class UpdatedController extends LinearOpMode
         aprilTag.setDecimation(2);
 
         // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Vision"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
-        }
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Vision"))
+                .addProcessor(aprilTag)
+                .build();
     }
 
     /*
