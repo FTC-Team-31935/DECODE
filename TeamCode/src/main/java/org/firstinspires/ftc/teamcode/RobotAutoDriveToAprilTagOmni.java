@@ -117,6 +117,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     ShooterB shooter;
     private double power = 0.5;
 
+    @Disabled
     @Override public void runOpMode()
     {
         shooter = new ShooterB(hardwareMap, telemetry);

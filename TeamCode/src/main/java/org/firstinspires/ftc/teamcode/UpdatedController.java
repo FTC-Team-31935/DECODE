@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -122,11 +123,13 @@ public class UpdatedController extends LinearOpMode
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
-    TouchSensor touchSensor;  // Touch sensor Object
+    DigitalChannel digitalTouch;  // Digital channel Object
 
     @Override public void runOpMode()
     {
-        touchSensor = hardwareMap.get(TouchSensor.class, "Load_Stopper");
+
+        // get a reference to our touchSensor object.
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "Load_Stopper");
         shooter = new ShooterB(hardwareMap, telemetry);
 
         // Initialize the Apriltag Detection process
@@ -203,14 +206,13 @@ public class UpdatedController extends LinearOpMode
                 shooter.increaseVelocity(-50);
             }
 
+            // button is pressed if value returned is true.
             // send the info back to driver station using telemetry function.
-            if (touchSensor.isPressed()) {
-                telemetry.addData("Touch Sensor", "Is Pressed");
-
+            if (digitalTouch.getState()) {
+                telemetry.addData("Load Stopper Switch", "PRESSED");
+                shooter.servoOff();
             } else {
-                telemetry.addData("Touch Sensor", "Is Not Pressed");
-
-                shooter.servoOff();//
+                telemetry.addData("Load Stopper Switch", "NOT PRESSED");
             }
 
             /*  test individual motors
