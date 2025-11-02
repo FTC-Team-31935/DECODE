@@ -87,7 +87,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TeleOp(name="UpdatedController")
+@TeleOp(name="Oh Gnome Teleop")
 //@Disabled
 public class UpdatedController extends LinearOpMode
 {
@@ -209,7 +209,8 @@ public class UpdatedController extends LinearOpMode
 
             } else {
                 telemetry.addData("Touch Sensor", "Is Not Pressed");
-                shooter.servoOff();
+
+                shooter.servoOff();//
             }
 
             /*  test individual motors
