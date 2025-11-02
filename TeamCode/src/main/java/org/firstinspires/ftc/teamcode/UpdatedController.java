@@ -206,9 +206,10 @@ public class UpdatedController extends LinearOpMode
             // send the info back to driver station using telemetry function.
             if (touchSensor.isPressed()) {
                 telemetry.addData("Touch Sensor", "Is Pressed");
-                shooter.servoOff();
+
             } else {
                 telemetry.addData("Touch Sensor", "Is Not Pressed");
+                shooter.servoOff();
             }
 
             /*  test individual motors
