@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -121,8 +122,11 @@ public class UpdatedController extends LinearOpMode
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
+    TouchSensor touchSensor;  // Touch sensor Object
+
     @Override public void runOpMode()
     {
+        touchSensor = hardwareMap.get(TouchSensor.class, "Load_Stopper");
         shooter = new ShooterB(hardwareMap, telemetry);
 
         // Initialize the Apriltag Detection process
@@ -197,6 +201,14 @@ public class UpdatedController extends LinearOpMode
                 shooter.increaseVelocity(50);
             } else if (gamepad1.dpad_down) {
                 shooter.increaseVelocity(-50);
+            }
+
+            // send the info back to driver station using telemetry function.
+            if (touchSensor.isPressed()) {
+                telemetry.addData("Touch Sensor", "Is Pressed");
+                shooter.servoOff();
+            } else {
+                telemetry.addData("Touch Sensor", "Is Not Pressed");
             }
 
             /*  test individual motors
