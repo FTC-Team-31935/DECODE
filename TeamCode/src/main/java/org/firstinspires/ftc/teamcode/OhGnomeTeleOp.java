@@ -29,18 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterB;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -89,9 +86,9 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TeleOp(name="Oh Gnome Teleop-old")
-@Disabled
-public class UpdatedController extends LinearOpMode
+@TeleOp(name="Oh Gnome Teleop")
+//@Disabled
+public class OhGnomeTeleOp extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     double DESIRED_DISTANCE = 60.0; //  this is how close the camera should get to the target (inches)
@@ -107,16 +104,12 @@ public class UpdatedController extends LinearOpMode
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    private DcMotor frontLeftDrive = null;  //  Used to control the left front drive wheel
-    private DcMotor frontRightDrive = null;  //  Used to control the right front drive wheel
-    private DcMotor backLeftDrive = null;  //  Used to control the left back drive wheel
-    private DcMotor backRightDrive = null;  //  Used to control the right back drive wheel
-
     private static int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-    ShooterB shooter;
+    private ShooterB shooter;
+    private MecanumDrive mecanum;
     private double power = 0.5;
 
     boolean targetFound     = false;    // Set to true when an AprilTag target is detected
@@ -132,25 +125,10 @@ public class UpdatedController extends LinearOpMode
         // get a reference to our touchSensor object.
         digitalTouch = hardwareMap.get(DigitalChannel.class, "Load_Stopper");
         shooter = new ShooterB(hardwareMap, telemetry);
+        mecanum = new MecanumDrive(hardwareMap, telemetry);
 
         // Initialize the Apriltag Detection process
         initAprilTag();
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must match the names assigned during the robot configuration.
-        // step (using the FTC Robot Controller app on the phone).
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "Front Left");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "Front Right");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "Back Left");
-        backRightDrive = hardwareMap.get(DcMotor.class, "Back Right");
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
@@ -177,7 +155,7 @@ public class UpdatedController extends LinearOpMode
             }
 
             // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
+            mecanum.moveRobot(drive, strafe, turn);
             telemetry.addData("Status", "Running");
 
             if (gamepad1.aWasPressed()) {
@@ -216,32 +194,6 @@ public class UpdatedController extends LinearOpMode
                 telemetry.addData("Load Stopper Switch", "NOT PRESSED");
             }
 
-            /*  test individual motors
-             if (gamepad1.dpad_down){
-                 frontLeftDrive.setPower(1);
-             } else{
-                 frontLeftDrive.setPower(0);
-             }
-
-            if (gamepad1.dpad_up){
-                frontRightDrive.setPower(.5);
-            } else{
-                frontRightDrive.setPower(0);
-            }
-
-            if (gamepad1.dpad_left){
-            backLeftDrive.setPower(.5);
-            } else{
-                backLeftDrive.setPower(0);
-            }
-
-            if (gamepad1.dpad_right){
-            backRightDrive.setPower(.5);
-            } else{
-                backRightDrive.setPower(0);
-            }
-             */
-
             //shooter.loadTest();
             shooter.GetShootSpeed();
             telemetry.update();
@@ -259,8 +211,8 @@ public class UpdatedController extends LinearOpMode
 
         // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
         drive  = -gamepad1.left_stick_y  * power;  // Reduce drive rate to 50%.
-        strafe = -gamepad1.left_stick_x  * power;  // Reduce strafe rate to 50%.
-        turn   = -gamepad1.right_stick_x * power;  // Reduce turn rate to 33%.
+        strafe = gamepad1.left_stick_x  * power;  // Reduce strafe rate to 50%.
+        turn   = gamepad1.right_stick_x * power;  // Reduce turn rate to 33%.
         telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }
 
@@ -272,8 +224,8 @@ public class UpdatedController extends LinearOpMode
 
         // Use the speed and turn "gains" to calculate how we want the robot to move.
         drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-        turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-        strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+        strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
         telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }
@@ -313,41 +265,6 @@ public class UpdatedController extends LinearOpMode
                 telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
             }
         }
-    }
-
-    /**
-     * Move robot according to desired axes motions
-     * <p>
-     * Positive X is forward
-     * <p>
-     * Positive Y is strafe left
-     * <p>
-     * Positive Yaw is counter-clockwise
-     */
-    public void moveRobot(double x, double y, double yaw) {
-        // Calculate wheel powers.
-        double frontLeftPower    =  x - y - yaw;
-        double frontRightPower   =  x + y + yaw;
-        double backLeftPower     =  x + y - yaw;
-        double backRightPower    =  x - y + yaw;
-
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
-        if (max > 1.0) {
-            frontLeftPower /= max;
-            frontRightPower /= max;
-            backLeftPower /= max;
-            backRightPower /= max;
-        }
-
-        // Send powers to the wheels.
-        frontLeftDrive.setPower(frontLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backLeftDrive.setPower(backLeftPower);
-        backRightDrive.setPower(backRightPower);
     }
 
     /**

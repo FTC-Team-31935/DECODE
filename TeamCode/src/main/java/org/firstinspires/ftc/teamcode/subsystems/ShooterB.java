@@ -35,12 +35,15 @@ public class ShooterB {
        // servo1 = hardwareMapInit.get(CRServo.class, "servo1");
        // servo1.setDirection(CRServo.Direction.REVERSE);
 
+        /*
         load_stopper = hardwareMapInit.get(NormalizedColorSensor.class, "load_stopper");
         if (load_stopper instanceof SwitchableLight) {
             ((SwitchableLight)load_stopper).enableLight(true);
         }
-    }
 
+         */
+    }
+/*
     public void loadTest (){
 
         if (load_stopper instanceof DistanceSensor) {
@@ -51,6 +54,8 @@ public class ShooterB {
             servoOff();
         }
     }
+
+ */
 
     public void servoOn (){
         servo0.setPower(1);

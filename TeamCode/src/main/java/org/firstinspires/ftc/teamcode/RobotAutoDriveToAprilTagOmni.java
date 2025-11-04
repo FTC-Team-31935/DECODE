@@ -88,7 +88,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Omni Drive To AprilTag")
-//@Disabled
+@Disabled
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
@@ -117,7 +117,6 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     ShooterB shooter;
     private double power = 0.5;
 
-    @Disabled
     @Override public void runOpMode()
     {
         shooter = new ShooterB(hardwareMap, telemetry);
@@ -265,7 +264,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             }
              */
 
-            shooter.loadTest();
+            //shooter.loadTest();
             shooter.GetShootSpeed();
             telemetry.update();
             sleep(10);

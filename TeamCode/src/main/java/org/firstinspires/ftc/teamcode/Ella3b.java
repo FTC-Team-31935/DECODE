@@ -76,7 +76,7 @@ public class Ella3b extends LinearOpMode {
                 shooter.servoOff();
             }
 
-            shooter.loadTest();
+            //shooter.loadTest();
             shooter.GetShootSpeed();
             telemetry.update();
 
