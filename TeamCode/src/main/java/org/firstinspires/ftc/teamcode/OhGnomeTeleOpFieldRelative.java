@@ -86,9 +86,9 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TeleOp(name="Oh Gnome Teleop - robot relative")
+@TeleOp(name="Oh Gnome Teleop - Field Relative")
 //@Disabled
-public class OhGnomeTeleOp extends LinearOpMode
+public class OhGnomeTeleOpFieldRelative extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     double DESIRED_DISTANCE = 60.0; //  this is how close the camera should get to the target (inches)
@@ -146,6 +146,9 @@ public class OhGnomeTeleOp extends LinearOpMode
             TestForAprilTags();
 
             TellDriverAprilTagInfo();
+            if(targetFound){
+                gamepad1.rumble(0, .2, 100);
+            }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
             if (gamepad1.left_bumper && targetFound) {
@@ -154,8 +157,7 @@ public class OhGnomeTeleOp extends LinearOpMode
                 ManualMovement();
             }
 
-            // Apply desired axes motions to the drivetrain.
-            mecanum.moveRobot(drive, strafe, turn);
+
             telemetry.addData("Status", "Running");
 
             if (gamepad1.aWasPressed()) {
@@ -184,7 +186,9 @@ public class OhGnomeTeleOp extends LinearOpMode
             } else if (gamepad1.dpad_down) {
                 shooter.increaseVelocity(-50);
             }
-
+            if (gamepad1.ps) {
+                mecanum.resetIMU();
+            }
             // button is pressed if value returned is true.
             // send the info back to driver station using telemetry function.
             if (digitalTouch.getState()) {
@@ -213,6 +217,10 @@ public class OhGnomeTeleOp extends LinearOpMode
         drive  = -gamepad1.left_stick_y  * power;  // Reduce drive rate to 50%.
         strafe = gamepad1.left_stick_x  * power;  // Reduce strafe rate to 50%.
         turn   = gamepad1.right_stick_x * power;  // Reduce turn rate to 33%.
+
+        // Apply desired axes motions to the drivetrain.
+        mecanum.driveFieldRelative(drive, strafe, turn);
+
         telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }
 
@@ -226,6 +234,9 @@ public class OhGnomeTeleOp extends LinearOpMode
         drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
         turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
         strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+        // Apply desired axes motions to the drivetrain.
+        mecanum.moveRobot(drive, strafe, turn);
 
         telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }

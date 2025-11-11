@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcontroller.external.samples.ConceptBlackboard.ALLIANCE_KEY;
+import static org.firstinspires.ftc.teamcode.subsystems.ColorSelection.STARTING_LOCATION;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -55,7 +56,6 @@ import java.util.concurrent.TimeUnit;
 //@Disabled
 public class OhGnomeAuto extends LinearOpMode
 {
-
     @Override public void runOpMode()
     {
         MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap ,telemetry);
@@ -68,18 +68,31 @@ public class OhGnomeAuto extends LinearOpMode
 
         while (opModeIsActive())
         {
-            mecanumDrive.moveRobot(-0.25, 0, 0);
-            sleep(3500);
-            mecanumDrive.moveRobot(0, 0, 0);
-            sleep(250);
-            if (blackboard.get(ALLIANCE_KEY) == "RED"){
-                mecanumDrive.moveRobot(0, 0.25, 0);
-            } else if  (blackboard.get(ALLIANCE_KEY) == "BLUE") {
-                mecanumDrive.moveRobot(0, -0.25, 0);
+            if (blackboard.get(STARTING_LOCATION)== "NEAR_BASKET") {
+                mecanumDrive.moveRobot(-0.25, 0, 0);
+                sleep(3500);
+                mecanumDrive.moveRobot(0, 0, 0);
+                sleep(250);
+                if (blackboard.get(ALLIANCE_KEY) == "RED") {
+                    mecanumDrive.moveRobot(0, 0.25, 0);
+                } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
+                    mecanumDrive.moveRobot(0, -0.25, 0);
+                }
+                sleep(1750);
+                mecanumDrive.moveRobot(0, 0, 0);
+                break;
+
+            } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
+                mecanumDrive.moveRobot(0.25, 0, 0);
+                sleep(1500);
+                mecanumDrive.moveRobot(0, 0, 0);
+                sleep(250);
+                break;
+
+            } else {
+                //Do nothing
+                break;
             }
-            sleep(1750);
-            mecanumDrive.moveRobot(0, 0, 0);
-            break;
         }
     }
 

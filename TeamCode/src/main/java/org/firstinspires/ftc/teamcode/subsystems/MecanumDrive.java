@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumDrive {
     private DcMotor frontLeftDrive = null;  //  Used to control the left front drive wheel
@@ -36,11 +37,11 @@ public class MecanumDrive {
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        imu = hardwareMap.get(IMU.class,"imu");
+        imu = hardwareMap.get(IMU.class, "imu");
 
         RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN);
 
         imu.initialize(new IMU.Parameters(RevOrientation));
     }
@@ -50,10 +51,10 @@ public class MecanumDrive {
      */
     public void moveRobot(double forward, double strafe, double rotate) {
         // Calculate wheel powers.
-        double frontLeftPower    =  forward + strafe + rotate;
-        double frontRightPower   =  forward - strafe - rotate;
-        double backLeftPower     =  forward - strafe + rotate;
-        double backRightPower    =  forward + strafe - rotate;
+        double frontLeftPower = forward + strafe + rotate;
+        double frontRightPower = forward - strafe - rotate;
+        double backLeftPower = forward - strafe + rotate;
+        double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;
         double maxSpeed = 1.0;
@@ -69,6 +70,28 @@ public class MecanumDrive {
         frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
+    }
+
+    // This routine drives the robot field relative
+    public void driveFieldRelative(double forward, double right, double rotate) {
+        // First, convert direction being asked to drive to polar coordinates
+        double theta = Math.atan2(forward, right);
+        double r = Math.hypot(right, forward);
+
+        // Second, rotate angle by the angle the robot is pointing
+        theta = AngleUnit.normalizeRadians(theta -
+                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+
+        // Third, convert back to cartesian
+        double newForward = r * Math.sin(theta);
+        double newRight = r * Math.cos(theta);
+
+        // Finally, call the drive method with robot relative forward and right amounts
+        moveRobot (newForward, newRight, rotate);
+    }
+
+    public void resetIMU() {
+        imu.resetYaw();
     }
 
 }
