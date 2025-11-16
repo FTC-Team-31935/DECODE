@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSelection;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterB;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -55,14 +57,19 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name="Oh Gnome Auto", group = "Auto")
 //@Disabled
 public class OhGnomeAuto extends LinearOpMode
+
 {
     @Override public void runOpMode()
     {
         MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap ,telemetry);
+        DigitalChannel digitalTouch = hardwareMap.get(DigitalChannel.class, "Load_Stopper");
+
+        ShooterB shooter= new ShooterB(hardwareMap ,telemetry);
         ColorSelection colorSelection = new ColorSelection(this);
         colorSelection.selectColor();
         telemetry.clearAll();
         colorSelection.displayColor();
+
 
         waitForStart();
 
@@ -73,6 +80,21 @@ public class OhGnomeAuto extends LinearOpMode
                 sleep(3500);
                 mecanumDrive.moveRobot(0, 0, 0);
                 sleep(250);
+
+
+                shooter.shootMedium();
+                sleep(500);
+                for (int x = 1; x <= 4; x++) {
+                    shooter.servoOn();
+                    while (!digitalTouch.getState()) {
+                        sleep(10);
+                    }
+                    shooter.servoOff();
+                    sleep(300);
+                }
+
+
+
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
                     mecanumDrive.moveRobot(0, 0.25, 0);
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
@@ -83,10 +105,42 @@ public class OhGnomeAuto extends LinearOpMode
                 break;
 
             } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
-                mecanumDrive.moveRobot(0.25, 0, 0);
+                if (blackboard.get(ALLIANCE_KEY) == "RED") {
+                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
+                    sleep(500);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    sleep(300);
+                    mecanumDrive.driveFieldRelative(0, 0, 70);
+                    sleep(1000);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
+                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+                    sleep(500);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    sleep(300);
+                    mecanumDrive.driveFieldRelative(0, 0, -70);
+                    sleep(1000);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                }
+
+                sleep(1000);
+                shooter.shootSmallTriangle();
+                sleep(500);
+                for (int x = 1; x <= 4; x++) {
+                    shooter.servoOn();
+                    while (!digitalTouch.getState()) {
+                        sleep(10);
+                    }
+                    shooter.servoOff();
+                    sleep(300);
+                }
+
+                mecanumDrive.driveFieldRelative(0.25, 0, 0);
                 sleep(1500);
-                mecanumDrive.moveRobot(0, 0, 0);
+                mecanumDrive.driveFieldRelative(0, 0, 0);
                 sleep(250);
+
+                //add long shoot
                 break;
 
             } else {

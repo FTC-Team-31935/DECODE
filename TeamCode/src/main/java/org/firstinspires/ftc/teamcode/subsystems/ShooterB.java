@@ -67,6 +67,11 @@ public class ShooterB {
        // servo1.setPower(0);
     }
 
+    public void shootOnce (){
+        servoOn();
+
+    }
+
     public void servoFlash (){
         if (IsServoFlashRunning){
             return;
@@ -120,5 +125,9 @@ public class ShooterB {
     public void increaseVelocity (double increase){
         double startVel=shooterMotor1.getVelocity();
         setVelocity(startVel+increase);
+    }
+    public void shootSmallTriangle (){
+        shooterMotor0.setVelocity(1200);
+        shooterMotor1.setVelocity(1200);
     }
 }
