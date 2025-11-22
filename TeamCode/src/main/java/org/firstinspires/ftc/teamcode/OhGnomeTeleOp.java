@@ -146,6 +146,9 @@ public class OhGnomeTeleOp extends LinearOpMode
             TestForAprilTags();
 
             TellDriverAprilTagInfo();
+            if(targetFound){
+                gamepad1.rumble(0, .2, 100);
+            }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
             if (gamepad1.left_bumper && targetFound) {
