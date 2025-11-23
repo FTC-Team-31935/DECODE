@@ -106,19 +106,19 @@ public class OhGnomeAuto extends LinearOpMode
 
             } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
-                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
-                    sleep(500);
-                    mecanumDrive.driveFieldRelative(0, 0, 0);
-                    sleep(300);
-                    mecanumDrive.driveFieldRelative(0, 0, 70);
-                    sleep(1000);
-                    mecanumDrive.driveFieldRelative(0, 0, 0);
-                } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
                     sleep(500);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                     sleep(300);
                     mecanumDrive.driveFieldRelative(0, 0, -70);
+                    sleep(1000);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
+                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
+                    sleep(500);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    sleep(300);
+                    mecanumDrive.driveFieldRelative(0, 0, 70);
                     sleep(1000);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                 }
