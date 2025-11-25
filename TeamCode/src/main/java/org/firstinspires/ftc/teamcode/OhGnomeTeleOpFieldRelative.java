@@ -163,8 +163,11 @@ public class OhGnomeTeleOpFieldRelative extends LinearOpMode
             if (gamepad1.aWasPressed()) {
                 DESIRED_DISTANCE = 68.0;
                 shooter.shootFast();
-            } else if (gamepad1.xWasPressed()) {
+            } else if (gamepad1.dpad_right) {
                 shooter.servoOff();
+            } else if (gamepad1.xWasPressed()){
+                DESIRED_DISTANCE = 94;
+                shooter.shootSmallTriangle();
             } else if (gamepad1.bWasPressed()) {
                 DESIRED_DISTANCE = 50.0;
                 shooter.shootMedium();
@@ -233,7 +236,8 @@ public class OhGnomeTeleOpFieldRelative extends LinearOpMode
         // Use the speed and turn "gains" to calculate how we want the robot to move.
         drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
         turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-        strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        //strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        strafe = gamepad1.left_stick_x  * power;  // Reduce strafe rate to 50%.
 
         // Apply desired axes motions to the drivetrain.
         mecanum.moveRobot(drive, strafe, turn);

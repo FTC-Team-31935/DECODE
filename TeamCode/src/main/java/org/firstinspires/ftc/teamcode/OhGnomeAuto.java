@@ -69,6 +69,8 @@ public class OhGnomeAuto extends LinearOpMode
         colorSelection.selectColor();
         telemetry.clearAll();
         colorSelection.displayColor();
+        mecanumDrive.resetIMU();
+
 
 
         waitForStart();
@@ -106,26 +108,34 @@ public class OhGnomeAuto extends LinearOpMode
 
             } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
-                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+                    mecanumDrive.driveFieldRelative(-0.5, 0, 0);
                     sleep(500);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                     sleep(300);
-                    mecanumDrive.driveFieldRelative(0, 0, -70);
+                    mecanumDrive.moveRobot(0, 0, -0.5);
                     sleep(1000);
-                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    mecanumDrive.moveRobot(0, 0, 0);
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
                     mecanumDrive.driveFieldRelative(0, 0.5, 0);
                     sleep(500);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                     sleep(300);
-                    mecanumDrive.driveFieldRelative(0, 0, 70);
-                    sleep(1000);
+
+                    mecanumDrive.driveFieldRelative(0, 0, 0.5);
+                    while (mecanumDrive.getYaw()>-45) {
+                        sleep(10);
+                    }
                     mecanumDrive.driveFieldRelative(0, 0, 0);
+
+
+
+
+
                 }
 
-                sleep(1000);
+                 sleep(1000);
                 shooter.shootSmallTriangle();
-                sleep(500);
+                sleep(2000);
                 for (int x = 1; x <= 4; x++) {
                     shooter.servoOn();
                     while (!digitalTouch.getState()) {
@@ -140,7 +150,9 @@ public class OhGnomeAuto extends LinearOpMode
                 mecanumDrive.driveFieldRelative(0, 0, 0);
                 sleep(250);
 
-                //add long shoot
+
+
+
                 break;
 
             } else {

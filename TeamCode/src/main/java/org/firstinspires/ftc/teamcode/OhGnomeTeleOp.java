@@ -164,8 +164,10 @@ public class OhGnomeTeleOp extends LinearOpMode
             if (gamepad1.aWasPressed()) {
                 DESIRED_DISTANCE = 68.0;
                 shooter.shootFast();
-            } else if (gamepad1.xWasPressed()) {
+            } else if (gamepad1.dpad_right) {
                 shooter.servoOff();
+            } else if (gamepad1.xWasPressed()){
+                shooter.shootSmallTriangle();
             } else if (gamepad1.bWasPressed()) {
                 DESIRED_DISTANCE = 50.0;
                 shooter.shootMedium();
