@@ -130,10 +130,6 @@ public class OhGnomeAuto extends LinearOpMode
                     }
                     mecanumDrive.driveFieldRelative(0, 0, 0);
 
-
-
-
-
                 }
 
                  sleep(1000);
@@ -148,13 +144,10 @@ public class OhGnomeAuto extends LinearOpMode
                     sleep(300);
                 }
 
-                mecanumDrive.driveFieldRelative(1, 0, 0);
-                sleep(1000);
+               mecanumDrive.driveFieldRelative(.5, 0, 0);
+                 sleep(200);
                 mecanumDrive.driveFieldRelative(0, 0, 0);
                 sleep(250);
-
-
-
 
                 break;
 
