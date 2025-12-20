@@ -135,7 +135,7 @@ public class OhGnomeAuto extends LinearOpMode
 
                 }
 
-                 /*sleep(1000);
+                 sleep(1000);
                 shooter.shootSmallTriangle();
                 sleep(2000);
                 for (int x = 1; x <= 4; x++) {
@@ -146,7 +146,7 @@ public class OhGnomeAuto extends LinearOpMode
                     shooter.servoOff();
                     sleep(300);
                 }
-                  */
+
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
                  sleep(200);

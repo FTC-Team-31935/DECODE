@@ -121,6 +121,9 @@ public class ShooterB {
         shooterMotor0.setVelocity(1200);
         shooterMotor1.setVelocity(1200);
     }*/
+    public void shootSmallTriangle (){
+
+    }
 
     public void shootSlow(){
         shooterMotor0.setVelocity(1150);
