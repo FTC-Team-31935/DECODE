@@ -10,6 +10,8 @@ public class ColorSelection
     public static final String ALLIANCE_KEY = "Alliance";
     public static final String DESIRED_TAG_ID = "Tag ID";
     public static final String STARTING_LOCATION = "location";
+    public static final String DELAYED_START = "delay";
+    public int delay = 0;
 
     public ColorSelection(LinearOpMode opMode){
         myOpMode = opMode;
@@ -25,6 +27,8 @@ public class ColorSelection
             myOpMode.telemetry.addLine();
             myOpMode.telemetry.addLine("push triangle button for small triangle starting spot");
             myOpMode.telemetry.addLine("push X button for near basket starting spot");
+            myOpMode.telemetry.addLine();
+            myOpMode.telemetry.addLine("punch up or down dpad to increase/decrease the delay");
             myOpMode.telemetry.addLine();
             myOpMode.telemetry.addLine("push home/ps to select option");
 
@@ -46,6 +50,21 @@ public class ColorSelection
             if (myOpMode.gamepad1.cross) {
                 //near basket
                 blackboard.put(STARTING_LOCATION, "NEAR_BASKET");
+            }
+            if (myOpMode.gamepad1.dpadDownWasPressed()){
+                delay-=1;
+                if (delay<0){
+                    delay=0;
+                }
+                blackboard.put(DELAYED_START,delay);
+
+            }
+            if (myOpMode.gamepad1.dpadUpWasPressed()){
+                delay += 1;
+                if (delay>25){
+                    delay=25;
+                }
+                blackboard.put(DELAYED_START,delay);
             }
 
             if (myOpMode.gamepad1.ps){
@@ -69,6 +88,7 @@ public class ColorSelection
         myOpMode.telemetry.addData("Alliance", blackboard.get(ALLIANCE_KEY));
         myOpMode.telemetry.addData("Tag Id", blackboard.get(DESIRED_TAG_ID));
         myOpMode.telemetry.addData("starting location", blackboard.get(STARTING_LOCATION));
+        myOpMode.telemetry.addData("Delay",blackboard.get(DELAYED_START));
         myOpMode.telemetry.update();
     }
 

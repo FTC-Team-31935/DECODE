@@ -95,7 +95,7 @@ public class ShooterB {
         }
     }
 
-    public void shootSlow(){
+    /*public void shootSlow(){
         shooterMotor0.setVelocity(760);
         shooterMotor1.setVelocity(760);
     }
@@ -113,7 +113,35 @@ public class ShooterB {
     public void shootStop(){
         shooterMotor0.setVelocity(0);
         shooterMotor1.setVelocity(0);
+
+
+        old wheeels
+    }*/
+    /* public void shootSmallTriangle (){
+        shooterMotor0.setVelocity(1200);
+        shooterMotor1.setVelocity(1200);
+    }*/
+
+    public void shootSlow(){
+        shooterMotor0.setVelocity(1150);
+        shooterMotor1.setVelocity(1150);
     }
+
+    public void shootMedium(){
+        shooterMotor0.setVelocity(1220);
+        shooterMotor1.setVelocity(1220);
+    }
+
+    public void shootFast(){
+        shooterMotor0.setVelocity(1320);
+        shooterMotor1.setVelocity(1320);
+    }
+
+    public void shootStop() {
+        shooterMotor0.setVelocity(0);
+        shooterMotor1.setVelocity(0);
+    }
+
     public void GetShootSpeed(){
      telemetry.addData("Velocity0 (rps)", "%.3f", shooterMotor0.getVelocity());
      telemetry.addData("Velocity1 (rps)", "%.3f", shooterMotor1.getVelocity());
@@ -126,8 +154,5 @@ public class ShooterB {
         double startVel=shooterMotor1.getVelocity();
         setVelocity(startVel+increase);
     }
-    public void shootSmallTriangle (){
-        shooterMotor0.setVelocity(1200);
-        shooterMotor1.setVelocity(1200);
-    }
+
 }

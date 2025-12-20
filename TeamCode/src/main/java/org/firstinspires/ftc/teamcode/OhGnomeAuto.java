@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcontroller.external.samples.ConceptBlackboard.ALLIANCE_KEY;
+import static org.firstinspires.ftc.teamcode.subsystems.ColorSelection.DELAYED_START;
 import static org.firstinspires.ftc.teamcode.subsystems.ColorSelection.STARTING_LOCATION;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -77,6 +78,8 @@ public class OhGnomeAuto extends LinearOpMode
 
         while (opModeIsActive())
         {
+            long MilliDelay=(int)blackboard.get(DELAYED_START)*1000;
+            sleep(MilliDelay);
             if (blackboard.get(STARTING_LOCATION)== "NEAR_BASKET") {
                 mecanumDrive.moveRobot(-0.25, 0, 0);
                 sleep(3500);
@@ -132,7 +135,7 @@ public class OhGnomeAuto extends LinearOpMode
 
                 }
 
-                 sleep(1000);
+                 /*sleep(1000);
                 shooter.shootSmallTriangle();
                 sleep(2000);
                 for (int x = 1; x <= 4; x++) {
@@ -143,6 +146,7 @@ public class OhGnomeAuto extends LinearOpMode
                     shooter.servoOff();
                     sleep(300);
                 }
+                  */
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
                  sleep(200);
