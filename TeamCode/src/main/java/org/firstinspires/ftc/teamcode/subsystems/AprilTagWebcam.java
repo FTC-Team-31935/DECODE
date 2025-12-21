@@ -23,7 +23,10 @@ public class AprilTagWebcam {
 
    private Telemetry telemetry;
 
-   public void init(HardwareMap hwMap, Telemetry telemetry) {
+
+
+
+    public void init(HardwareMap hwMap, Telemetry telemetry) {
        this.telemetry = telemetry;
 
        aprilTagProcessor = new AprilTagProcessor.Builder()
