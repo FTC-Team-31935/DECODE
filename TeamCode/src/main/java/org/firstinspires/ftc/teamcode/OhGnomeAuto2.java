@@ -74,10 +74,11 @@ public class OhGnomeAuto2 extends LinearOpMode
     double  rangeError      = 5;
     double  headingError    = 5;
     double  yawError        = 5;
+    MecanumDrive mecanumDrive;
 
-    MecanumDrive mecanumDrive = new MecanumDrive(hardwareMap ,telemetry);
     @Override public void runOpMode()
     {
+        mecanumDrive = new MecanumDrive(hardwareMap ,telemetry);
 
         DigitalChannel digitalTouch = hardwareMap.get(DigitalChannel.class, "Load_Stopper");
 
@@ -90,14 +91,12 @@ public class OhGnomeAuto2 extends LinearOpMode
         AprilTagWebcam AprilTag = new AprilTagWebcam();
         AprilTag.init(hardwareMap,telemetry);
 
-
-
         waitForStart();
 
         while (opModeIsActive())
         {
             double runtime = getRuntime();
-            long MilliDelay=(int)blackboard.get(DELAYED_START)*1000;
+            long MilliDelay=(int)blackboard.getOrDefault(DELAYED_START,0)*1000;
             sleep(MilliDelay);
             if (blackboard.get(STARTING_LOCATION)== "NEAR_BASKET") {
                 shooter.shootMedium();
@@ -108,9 +107,29 @@ public class OhGnomeAuto2 extends LinearOpMode
 
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
                     DESIRED_TAG_ID = 24;
+
                     for (int x = 1; x <= 4; x++) {
-                        while (rangeError >0.1 && headingError >0.1 && yawError>0.1 && getRuntime()<25.0){
+
+                        telemetry.addLine("Start April tag search");
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+
+                        rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                        headingError    = desiredTag.ftcPose.bearing;
+                        yawError        = desiredTag.ftcPose.yaw;
+
+                        while ((Math.abs(rangeError) > 0.1 || Math.abs(headingError) >0.1 || Math.abs(yawError)>0.1) && getRuntime()<25.0){
+
+                            telemetry.addLine("Running AutomaticMovement");
+
+                            AprilTag.update();
+                            desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                            AprilTag.displayDetetionTelemetry(desiredTag);
+
                             AutomaticMovement();
+                            telemetry.update();
+
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
                         sleep(10);
@@ -122,11 +141,32 @@ public class OhGnomeAuto2 extends LinearOpMode
                         sleep(300);
                     }
                     mecanumDrive.moveRobot(0, 0.25, 0);
+
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
                     DESIRED_TAG_ID = 20;
+
                     for (int x = 1; x <= 4; x++) {
-                        while (rangeError >0.1 && headingError >0.1 && yawError>0.1 && getRuntime()<25.0){
+
+                        telemetry.addLine("Start April tag search");
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+                        telemetry.update();
+
+                        rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                        headingError    = desiredTag.ftcPose.bearing;
+                        yawError        = desiredTag.ftcPose.yaw;
+
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+
+                            telemetry.addLine("Running AutomaticMovement");
+
+                            AprilTag.update();
+                            desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                            AprilTag.displayDetetionTelemetry(desiredTag);
+
                             AutomaticMovement();
+                            telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
                         sleep(10);

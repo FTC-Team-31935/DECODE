@@ -47,7 +47,7 @@ public class AprilTagWebcam {
        aprilTagProcessor.setDecimation(2);
 
        VisionPortal.Builder builder = new VisionPortal.Builder();
-       builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1"));
+       builder.setCamera(hwMap.get(WebcamName.class, "Vision"));
        builder.setCameraResolution(new Size(640 , 480));
        builder.addProcessor(aprilTagProcessor);
 
@@ -63,7 +63,10 @@ public class AprilTagWebcam {
     }
 
     public void displayDetetionTelemetry(AprilTagDetection detectedId) {
-       if (detectedId == null) {return;}
+       if (detectedId == null) {
+           telemetry.addLine("No April Tag Detected");
+            return;
+       }
        if (detectedId.metadata !=null) {
            telemetry.addData("Found", "ID %d (%s)", detectedId.id, detectedId.metadata.name);
            telemetry.addData("Range",  "%5.1f inches", detectedId.ftcPose.range);
