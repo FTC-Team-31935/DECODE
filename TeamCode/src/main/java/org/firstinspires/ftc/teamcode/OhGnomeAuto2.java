@@ -49,7 +49,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 public class OhGnomeAuto2 extends LinearOpMode
 
 {
-    double DESIRED_DISTANCE = 50.0; //  this is how close the camera should get to the target (inches)
+    double DESIRED_DISTANCE = 45.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -115,11 +115,18 @@ public class OhGnomeAuto2 extends LinearOpMode
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                         AprilTag.displayDetetionTelemetry(desiredTag);
 
-                        rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                        headingError    = desiredTag.ftcPose.bearing;
-                        yawError        = desiredTag.ftcPose.yaw;
+                        if (desiredTag != null) {
 
-                        while ((Math.abs(rangeError) > 0.1 || Math.abs(headingError) >0.1 || Math.abs(yawError)>0.1) && getRuntime()<25.0){
+                            rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                            headingError = desiredTag.ftcPose.bearing;
+                            yawError = desiredTag.ftcPose.yaw;
+                        }else{
+                            rangeError = 0;
+                            headingError = 0;
+                            yawError = 0;
+                        }
+
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
 
@@ -127,7 +134,11 @@ public class OhGnomeAuto2 extends LinearOpMode
                             desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                             AprilTag.displayDetetionTelemetry(desiredTag);
 
-                            AutomaticMovement();
+                            if (desiredTag != null) {
+                                AutomaticMovement();
+                            }else{
+                                YawCorrection(0);
+                            }
                             telemetry.update();
 
                         }
@@ -152,20 +163,35 @@ public class OhGnomeAuto2 extends LinearOpMode
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                         AprilTag.displayDetetionTelemetry(desiredTag);
                         telemetry.update();
+                        if (desiredTag != null) {
 
-                        rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                        headingError    = desiredTag.ftcPose.bearing;
-                        yawError        = desiredTag.ftcPose.yaw;
+                            rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                            headingError = desiredTag.ftcPose.bearing;
+                            yawError = desiredTag.ftcPose.yaw;
+                        }else{
+                            rangeError = 0;
+                            headingError    = 10;
+                            yawError = 0;
+
+                        }
 
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
+                            telemetry.addLine("Error values:");
+                            telemetry.addData("Range",rangeError);
+                            telemetry.addData("Heading",headingError);
+                            telemetry.addData("Yaw",yawError);
 
                             AprilTag.update();
                             desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                             AprilTag.displayDetetionTelemetry(desiredTag);
 
-                            AutomaticMovement();
+                            if (desiredTag != null) {
+                                AutomaticMovement();
+                            }else{
+                                YawCorrection(0);
+                            }
                             telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
@@ -274,6 +300,25 @@ public class OhGnomeAuto2 extends LinearOpMode
         rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
         headingError    = desiredTag.ftcPose.bearing;
         yawError        = desiredTag.ftcPose.yaw;
+
+
+        // Use the speed and turn "gains" to calculate how we want the robot to move.
+        drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+        turn   = Range.clip(-headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+        strafe = Range.clip(yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+
+
+        // Apply desired axes motions to the drivetrain.
+        mecanumDrive.moveRobot(drive, strafe, turn);
+
+        telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+    }
+    private void YawCorrection(double desiredYaw) {
+        // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+        rangeError      = 0;
+        headingError    = -(mecanumDrive.getYaw() - desiredYaw);
+        yawError        = 0;
+
 
         // Use the speed and turn "gains" to calculate how we want the robot to move.
         drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
