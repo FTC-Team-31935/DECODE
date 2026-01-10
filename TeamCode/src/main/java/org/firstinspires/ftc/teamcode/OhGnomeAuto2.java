@@ -49,7 +49,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 public class OhGnomeAuto2 extends LinearOpMode
 
 {
-    double DESIRED_DISTANCE = 45.0; //  this is how close the camera should get to the target (inches)
+    double DESIRED_DISTANCE = 40.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -137,7 +137,12 @@ public class OhGnomeAuto2 extends LinearOpMode
                             if (desiredTag != null) {
                                 AutomaticMovement();
                             }else{
-                                YawCorrection(0);
+                                if (getRuntime() > 20.0){
+                                    YawCorrection(5);
+                                }else{
+                                    mecanumDrive.driveFieldRelative(0,0,-0.5);
+                                }
+
                             }
                             telemetry.update();
 
@@ -174,7 +179,6 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = 0;
 
                         }
-
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
@@ -190,9 +194,13 @@ public class OhGnomeAuto2 extends LinearOpMode
                             if (desiredTag != null) {
                                 AutomaticMovement();
                             }else{
-                                YawCorrection(0);
+                                if (getRuntime() > 20.0){
+                                    YawCorrection(5);
+                                }else{
+                                    mecanumDrive.driveFieldRelative(0,0,0.1);
+                                }
+
                             }
-                            telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
                         sleep(10);
@@ -205,28 +213,49 @@ public class OhGnomeAuto2 extends LinearOpMode
                     }
                     mecanumDrive.moveRobot(0, -0.25, 0);
                 }
-                sleep(1750);
+                sleep(2000);
                 mecanumDrive.moveRobot(0, 0, 0);
                 break;
 
             } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
-                    sleep(2000);
+                    sleep(3000);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                     sleep(300);
                     mecanumDrive.driveFieldRelative(0, 0, -0.5);
-                    while (mecanumDrive.getYaw()<45) {
+                    while (mecanumDrive.getYaw()<60) {
                         sleep(10);
                     }
                     mecanumDrive.moveRobot(0, 0, 0);
                     DESIRED_TAG_ID = 24;
                     for (int x = 1; x <= 4; x++) {
-                        while (rangeError >0.1 && headingError >0.1 && yawError>0.1 && getRuntime()<25.0){
-                            AutomaticMovement();
+                        telemetry.addLine("Start April tag search");
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+                        telemetry.update();
+                        if (desiredTag != null) {
+
+                            rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                            headingError = desiredTag.ftcPose.bearing;
+                            yawError = desiredTag.ftcPose.yaw;
+                        }else{
+                            rangeError = 0;
+                            headingError    = 10;
+                            yawError = 0;
+
+                        }
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                            if (desiredTag != null) {
+                                AutomaticMovement();
+                            }else if (getRuntime() > 20.0){
+                                YawCorrection(5);
+                            }
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
-                        sleep(10);
+                        shooter.shootMedium();
+                        sleep(200);
                         shooter.servoOn();
                         while (!digitalTouch.getState()) {
                             sleep(10);
@@ -240,10 +269,9 @@ public class OhGnomeAuto2 extends LinearOpMode
 
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
                     mecanumDrive.driveFieldRelative(0, 0.5, 0);
-                    sleep(2000);
+                    sleep(3000);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
                     sleep(300);
-
                     mecanumDrive.driveFieldRelative(0, 0, 0.5);
                     while (mecanumDrive.getYaw()>-45) {
                         sleep(10);
@@ -251,11 +279,32 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.moveRobot(0, 0, 0);
                     DESIRED_TAG_ID = 20;
                     for (int x = 1; x <= 4; x++) {
-                        while (rangeError >0.1 && headingError >0.1 && yawError>0.1 && getRuntime()<25.0){
-                            AutomaticMovement();
+                        telemetry.addLine("Start April tag search");
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+                        telemetry.update();
+                        if (desiredTag != null) {
+
+                            rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                            headingError = desiredTag.ftcPose.bearing;
+                            yawError = desiredTag.ftcPose.yaw;
+                        }else{
+                            rangeError = 0;
+                            headingError    = 10;
+                            yawError = 0;
+
+                        }
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                            if (desiredTag != null) {
+                                AutomaticMovement();
+                            }else if (getRuntime() > 20.0){
+                            YawCorrection(5);
+                            }
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
-                        sleep(10);
+                        shooter.shootMedium();
+                        sleep(200);
                         shooter.servoOn();
                         while (!digitalTouch.getState()) {
                             sleep(10);
@@ -313,7 +362,7 @@ public class OhGnomeAuto2 extends LinearOpMode
 
         telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }
-    private void YawCorrection(double desiredYaw) {
+    private void YawCorrection(int desiredYaw) {
         // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
         rangeError      = 0;
         headingError    = -(mecanumDrive.getYaw() - desiredYaw);
