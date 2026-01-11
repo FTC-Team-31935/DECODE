@@ -158,4 +158,12 @@ public class ShooterB {
         setVelocity(startVel+increase);
     }
 
+    public boolean isSpinning(){
+        if (shooterMotor0.getVelocity()>0 || shooterMotor1.getVelocity()>0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

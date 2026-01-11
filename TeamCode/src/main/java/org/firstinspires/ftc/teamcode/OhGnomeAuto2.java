@@ -78,6 +78,7 @@ public class OhGnomeAuto2 extends LinearOpMode
 
     @Override public void runOpMode()
     {
+
         mecanumDrive = new MecanumDrive(hardwareMap ,telemetry);
 
         DigitalChannel digitalTouch = hardwareMap.get(DigitalChannel.class, "Load_Stopper");
@@ -93,10 +94,13 @@ public class OhGnomeAuto2 extends LinearOpMode
 
         waitForStart();
 
+        float initialRuntime = (float) getRuntime();
+
         while (opModeIsActive())
         {
-            double runtime = getRuntime();
-            long MilliDelay=(int)blackboard.getOrDefault(DELAYED_START,0)*1000;
+
+            int initialDelaySec = (int) blackboard.getOrDefault(DELAYED_START,0);
+            long MilliDelay=(int)initialDelaySec* 1000L;
             sleep(MilliDelay);
             if (blackboard.get(STARTING_LOCATION)== "NEAR_BASKET") {
                 shooter.shootMedium();
@@ -126,7 +130,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = 0;
                         }
 
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
 
@@ -137,7 +141,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                             if (desiredTag != null) {
                                 AutomaticMovement();
                             }else{
-                                if (getRuntime() > 20.0){
+                                if ((getRuntime() - initialRuntime) > 20.0){
                                     YawCorrection(5);
                                 }else{
                                     mecanumDrive.driveFieldRelative(0,0,-0.5);
@@ -179,7 +183,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = 0;
 
                         }
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
                             telemetry.addLine("Error values:");
@@ -194,7 +198,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                             if (desiredTag != null) {
                                 AutomaticMovement();
                             }else{
-                                if (getRuntime() > 20.0){
+                                if ((getRuntime() - initialRuntime) > 20.0){
                                     YawCorrection(5);
                                 }else{
                                     mecanumDrive.driveFieldRelative(0,0,0.1);
@@ -219,16 +223,31 @@ public class OhGnomeAuto2 extends LinearOpMode
 
             } else if (blackboard.get(STARTING_LOCATION)== "SMALL_TRIANGLE") {
                 if (blackboard.get(ALLIANCE_KEY) == "RED") {
-                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
-                    sleep(3000);
-                    mecanumDrive.driveFieldRelative(0, 0, 0);
-                    sleep(300);
-                    mecanumDrive.driveFieldRelative(0, 0, -0.5);
-                    while (mecanumDrive.getYaw()<60) {
-                        sleep(10);
-                    }
-                    mecanumDrive.moveRobot(0, 0, 0);
                     DESIRED_TAG_ID = 24;
+                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+                    sleep(500);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    while (mecanumDrive.getYaw()<43) {
+                        YawCorrection(45);
+                    }
+                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+                    AprilTag.update();
+                    desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                    telemetry.addData("desired tag",desiredTag!=null);
+                    telemetry.addData("run time",(getRuntime() - initialRuntime));
+                    telemetry.update();
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.75 + initialDelaySec)){
+                        sleep(10);
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+                        telemetry.addData("desired tag",desiredTag!=null);
+                        telemetry.addData("run time",(getRuntime() - initialRuntime));
+                        telemetry.update();
+                    }
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+
+
                     for (int x = 1; x <= 4; x++) {
                         telemetry.addLine("Start April tag search");
                         AprilTag.update();
@@ -246,12 +265,16 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = 0;
 
                         }
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
                             if (desiredTag != null) {
                                 AutomaticMovement();
-                            }else if (getRuntime() > 20.0){
+                            }else if ((getRuntime() - initialRuntime) > 20.0){
                                 YawCorrection(5);
                             }
+                            AprilTag.update();
+                            desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                            AprilTag.displayDetetionTelemetry(desiredTag);
+                            telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
                         shooter.shootMedium();
@@ -268,16 +291,31 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.moveRobot(0, 0, 0);
 
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
-                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
-                    sleep(3000);
-                    mecanumDrive.driveFieldRelative(0, 0, 0);
-                    sleep(300);
-                    mecanumDrive.driveFieldRelative(0, 0, 0.5);
-                    while (mecanumDrive.getYaw()>-45) {
-                        sleep(10);
-                    }
-                    mecanumDrive.moveRobot(0, 0, 0);
                     DESIRED_TAG_ID = 20;
+                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
+                    sleep(500);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    while (mecanumDrive.getYaw()>-43) {
+                        YawCorrection(-45);
+                    }
+                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
+                    AprilTag.update();
+                    desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                    telemetry.addData("desired tag",desiredTag!=null);
+                    telemetry.addData("run time",(getRuntime() - initialRuntime));
+                    telemetry.update();
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.75 + initialDelaySec)){
+                        sleep(10);
+                        AprilTag.update();
+                        desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                        AprilTag.displayDetetionTelemetry(desiredTag);
+                        telemetry.addData("desired tag",desiredTag!=null);
+                        telemetry.addData("run time",(getRuntime() - initialRuntime));
+                        telemetry.update();
+                    }
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+
+
                     for (int x = 1; x <= 4; x++) {
                         telemetry.addLine("Start April tag search");
                         AprilTag.update();
@@ -295,12 +333,16 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = 0;
 
                         }
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && getRuntime()<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
                             if (desiredTag != null) {
                                 AutomaticMovement();
-                            }else if (getRuntime() > 20.0){
-                            YawCorrection(5);
+                            }else if ((getRuntime() - initialRuntime) > 20.0){
+                            YawCorrection(-45);
                             }
+                            AprilTag.update();
+                            desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
+                            AprilTag.displayDetetionTelemetry(desiredTag);
+                            telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
                         shooter.shootMedium();
@@ -332,7 +374,7 @@ public class OhGnomeAuto2 extends LinearOpMode
 
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
-                 sleep(200);
+                 sleep(700);
                 mecanumDrive.driveFieldRelative(0, 0, 0);
                 sleep(250);
 
@@ -378,7 +420,7 @@ public class OhGnomeAuto2 extends LinearOpMode
         // Apply desired axes motions to the drivetrain.
         mecanumDrive.moveRobot(drive, strafe, turn);
 
-        telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        //telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
     }
 
 }
