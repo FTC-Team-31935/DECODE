@@ -287,7 +287,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                         sleep(300);
                     }
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
-                    sleep(500);
+                    sleep(700);
                     mecanumDrive.moveRobot(0, 0, 0);
 
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
@@ -355,7 +355,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                         sleep(300);
                     }
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
-                    sleep(500);
+                    sleep(700);
                     mecanumDrive.moveRobot(0, 0, 0);
 
                 }
@@ -374,9 +374,9 @@ public class OhGnomeAuto2 extends LinearOpMode
 
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
-                 sleep(700);
-                mecanumDrive.driveFieldRelative(0, 0, 0);
-                sleep(250);
+               sleep(300);
+               mecanumDrive.driveFieldRelative(0, 0, 0);
+               sleep(250);
 
                 break;
 
