@@ -54,8 +54,8 @@ public class OhGnomeAuto2 extends LinearOpMode
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". e.g. Ramp update to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  e.g. Ramp update to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
+    final double SPEED_GAIN  =  0.1  ;   //  Forward Speed Control "Gain". e.g. Ramp update to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.05 ;   //  Strafe Speed Control "Gain".  e.g. Ramp update to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp update to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
@@ -127,7 +127,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                         }else{
                             rangeError = 0;
                             headingError = 0;
-                            yawError = 0;
+                            yawError = 1;
                         }
 
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
@@ -179,8 +179,8 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = desiredTag.ftcPose.yaw;
                         }else{
                             rangeError = 0;
-                            headingError    = 10;
-                            yawError = 0;
+                            headingError    = 0;
+                            yawError = 1;
 
                         }
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
@@ -236,7 +236,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                     telemetry.addData("desired tag",desiredTag!=null);
                     telemetry.addData("run time",(getRuntime() - initialRuntime));
                     telemetry.update();
-                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.75 + initialDelaySec)){
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.0 + initialDelaySec)){
                         sleep(10);
                         AprilTag.update();
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -261,8 +261,8 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = desiredTag.ftcPose.yaw;
                         }else{
                             rangeError = 0;
-                            headingError    = 10;
-                            yawError = 0;
+                            headingError    = 0;
+                            yawError = 1;
 
                         }
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
@@ -304,7 +304,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                     telemetry.addData("desired tag",desiredTag!=null);
                     telemetry.addData("run time",(getRuntime() - initialRuntime));
                     telemetry.update();
-                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.75 + initialDelaySec)){
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.0 + initialDelaySec)){
                         sleep(10);
                         AprilTag.update();
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -329,8 +329,8 @@ public class OhGnomeAuto2 extends LinearOpMode
                             yawError = desiredTag.ftcPose.yaw;
                         }else{
                             rangeError = 0;
-                            headingError    = 10;
-                            yawError = 0;
+                            headingError    = 0;
+                            yawError = 1;
 
                         }
                         while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
@@ -374,7 +374,7 @@ public class OhGnomeAuto2 extends LinearOpMode
 
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
-               sleep(300);
+               sleep(700);
                mecanumDrive.driveFieldRelative(0, 0, 0);
                sleep(250);
 
