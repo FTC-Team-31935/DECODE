@@ -138,14 +138,14 @@ public class OhGnomeAuto extends LinearOpMode
                  sleep(1000);
                 shooter.shootSmallTriangle();
                 sleep(2000);
-                for (int x = 1; x <= 4; x++) {
+                /*for (int x = 1; x <= 4; x++) {
                     shooter.servoOn();
                     while (!digitalTouch.getState()) {
                         sleep(10);
                     }
                     shooter.servoOff();
                     sleep(300);
-                }
+                }*/
 
 
                mecanumDrive.driveFieldRelative(.5, 0, 0);
