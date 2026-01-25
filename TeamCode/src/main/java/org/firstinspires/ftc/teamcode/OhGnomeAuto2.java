@@ -227,26 +227,40 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
                     sleep(500);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
-                    while (mecanumDrive.getYaw()<43) {
-                        YawCorrection(45);
+                    while (mecanumDrive.getYaw()>-43) {
+                        YawCorrection(-45);
                     }
-                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+
+
+
+                    mecanumDrive.driveFieldRelative(0, -0.7, 0);
+                    sleep(1550);
+
+                    mecanumDrive.driveFieldRelative(0, 0.1, 0);
                     AprilTag.update();
                     desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                     telemetry.addData("desired tag",desiredTag!=null);
                     telemetry.addData("run time",(getRuntime() - initialRuntime));
+                    telemetry.addLine("slidhing");
                     telemetry.update();
-                    while (desiredTag == null && (getRuntime() - initialRuntime) < (4.0 + initialDelaySec)){
+
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (15.0 + initialDelaySec)){
                         sleep(10);
                         AprilTag.update();
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                         AprilTag.displayDetetionTelemetry(desiredTag);
                         telemetry.addData("desired tag",desiredTag!=null);
                         telemetry.addData("run time",(getRuntime() - initialRuntime));
+                        telemetry.addLine("in loop");
                         telemetry.update();
                     }
+                    sleep(200);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
-
+                    telemetry.addData("desired tag",desiredTag!=null);
+                    telemetry.addData("run time",(getRuntime() - initialRuntime));
+                    telemetry.addLine("done loop");
+                    telemetry.update();
+                    //sleep(4000);
 
                     for (int x = 1; x <= 4; x++) {
                         telemetry.addLine("Start April tag search");
@@ -262,14 +276,15 @@ public class OhGnomeAuto2 extends LinearOpMode
                         }else{
                             rangeError = 0;
                             headingError    = 0;
-                            yawError = 1;
+                            yawError = 6;
 
                         }
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
+                        shooter.shootMedium();
+                        while ((Math.abs(rangeError) > 1.5 || Math.abs(headingError) > 5 || Math.abs(yawError)> 5 && (getRuntime() - initialRuntime)<25.0)){
                             if (desiredTag != null) {
                                 AutomaticMovement();
-                            }else if ((getRuntime() - initialRuntime) > 20.0){
-                                YawCorrection(5);
+                            }else{
+                                YawCorrection(-45);
                             }
                             AprilTag.update();
                             desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -277,13 +292,13 @@ public class OhGnomeAuto2 extends LinearOpMode
                             telemetry.update();
                         }
                         mecanumDrive.moveRobot(0, 0, 0);
-                        shooter.shootMedium();
-                        sleep(200);
+
                         shooter.servoOn();
                         while (!digitalTouch.getState()) {
                             sleep(10);
                         }
                         shooter.servoOff();
+                        //sleep(3000);
                         sleep(300);
                     }
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
