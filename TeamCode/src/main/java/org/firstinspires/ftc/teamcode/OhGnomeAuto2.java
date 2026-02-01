@@ -227,8 +227,8 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
                     sleep(500);
                     mecanumDrive.driveFieldRelative(0, 0, 0);
-                    while (mecanumDrive.getYaw()>-43) {
-                        YawCorrection(-45);
+                    while (mecanumDrive.getYaw()<43) {
+                        YawCorrection(45);
                     }
 
 
@@ -236,7 +236,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.driveFieldRelative(0, -0.7, 0);
                     sleep(1550);
 
-                    mecanumDrive.driveFieldRelative(0, 0.1, 0);
+                    mecanumDrive.driveFieldRelative(0, -0.1, 0);
                     AprilTag.update();
                     desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
                     telemetry.addData("desired tag",desiredTag!=null);
@@ -244,7 +244,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                     telemetry.addLine("slidhing");
                     telemetry.update();
 
-                    while (desiredTag == null && (getRuntime() - initialRuntime) < (15.0 + initialDelaySec)){
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (12.0 + initialDelaySec)){
                         sleep(10);
                         AprilTag.update();
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -284,7 +284,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                             if (desiredTag != null) {
                                 AutomaticMovement();
                             }else{
-                                YawCorrection(-45);
+                                YawCorrection(45);
                             }
                             AprilTag.update();
                             desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -301,9 +301,13 @@ public class OhGnomeAuto2 extends LinearOpMode
                         //sleep(3000);
                         sleep(300);
                     }
-                    mecanumDrive.driveFieldRelative(0, -0.5, 0);
+                    mecanumDrive.driveFieldRelative(0, 0.5, 0);
                     sleep(700);
                     mecanumDrive.moveRobot(0, 0, 0);
+                    mecanumDrive.driveFieldRelative(.5, 0, 0);
+                    sleep(900);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    sleep(250);
 
                 } else if (blackboard.get(ALLIANCE_KEY) == "BLUE") {
                     DESIRED_TAG_ID = 20;
@@ -327,7 +331,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                     telemetry.addLine("slidhing");
                     telemetry.update();
 
-                    while (desiredTag == null && (getRuntime() - initialRuntime) < (15.0 + initialDelaySec)){
+                    while (desiredTag == null && (getRuntime() - initialRuntime) < (12.0 + initialDelaySec)){
                         sleep(10);
                         AprilTag.update();
                         desiredTag = AprilTag.getTagBySpecificId(DESIRED_TAG_ID);
@@ -387,6 +391,10 @@ public class OhGnomeAuto2 extends LinearOpMode
                     mecanumDrive.driveFieldRelative(0, -0.5, 0);
                     sleep(700);
                     mecanumDrive.moveRobot(0, 0, 0);
+                    mecanumDrive.driveFieldRelative(.5, 0, 0);
+                    sleep(900);
+                    mecanumDrive.driveFieldRelative(0, 0, 0);
+                    sleep(250);
 
                 }
 
@@ -403,10 +411,7 @@ public class OhGnomeAuto2 extends LinearOpMode
                 }*/
 
 
-               mecanumDrive.driveFieldRelative(.5, 0, 0);
-               sleep(900);
-               mecanumDrive.driveFieldRelative(0, 0, 0);
-               sleep(250);
+
 
                 break;
 
