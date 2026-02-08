@@ -127,10 +127,10 @@ public class OhGnomeAuto2 extends LinearOpMode
                         }else{
                             rangeError = 0;
                             headingError = 0;
-                            yawError = 1;
+                            yawError = 10;
                         }
 
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 10 || Math.abs(yawError)> 10) && (getRuntime() - initialRuntime)<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
 
@@ -180,10 +180,10 @@ public class OhGnomeAuto2 extends LinearOpMode
                         }else{
                             rangeError = 0;
                             headingError    = 0;
-                            yawError = 1;
+                            yawError = 10;
 
                         }
-                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 1 || Math.abs(yawError)> 1) && (getRuntime() - initialRuntime)<25.0){
+                        while ((Math.abs(rangeError) > 1 || Math.abs(headingError) > 10 || Math.abs(yawError)> 10) && (getRuntime() - initialRuntime)<25.0){
 
                             telemetry.addLine("Running AutomaticMovement");
                             telemetry.addLine("Error values:");
